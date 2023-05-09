@@ -1,3 +1,4 @@
+
 let buttons = document.querySelectorAll('.slider__arrow');
 slides = Array.from(document.querySelectorAll('.slider__item'))
 slidesCount = slides.length

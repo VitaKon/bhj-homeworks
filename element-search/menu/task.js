@@ -1,4 +1,3 @@
-
 let menuLink = Array.from(document.getElementsByClassName('menu__link'));
 
 menuLink.forEach(item => item.addEventListener('click', function (evt) {

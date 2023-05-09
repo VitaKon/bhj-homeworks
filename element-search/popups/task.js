@@ -1,3 +1,4 @@
+
 let modalMain = document.getElementById('modal_main');
 let modalClose = Array.from(document.getElementsByClassName('modal__close'));
 let showSuccess = document.querySelector('.show-success');
