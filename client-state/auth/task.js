@@ -1,48 +1,43 @@
-const signIn = document.getElementById('signin'),
-    form = document.querySelector('#signin form'),
-    welcome = document.getElementById('welcome'),
-    userId = document.getElementById('user_id'),
-    exit = document.getElementById('exit__btn');
+const signin = document.getElementById('signin');
+const form = document.getElementById('signin__form');
+const welcome = document.getElementById('welcome');
+const userId = document.getElementById('user_id');
+const localUserId = localStorage.getItem('userId');
+const signOut = document.getElementById('sign__out');
 
-if (localStorage.getItem('userId')) {
-    welcome.classList.add('welcome_active');
-    userId.innerText = localStorage.getItem('userId');
-}
-else {
-    signIn.classList.add('signin_active');
+function authorization(id) {
+    signin.classList.toggle('signin_active');
+    welcome.classList.toggle('welcome_active');
+    userId.innerText = id;
 }
 
-form.addEventListener('submit', (e) => {
-    const formData = new FormData(form);
+if (localUserId != null) {
+    authorization(localUserId);
+}
+
+form.addEventListener('submit', function (event) {
+    let formData = new FormData(form);
     let xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://netology-slow-rest.herokuapp.com/auth.php');
+    xhr.responseType = 'json';
+    xhr.open('POST', 'https://students.netoservices.ru/nestjs-backend/auth', true);
     xhr.send(formData);
 
-    xhr.addEventListener('readystatechange', () => {
-        if (xhr.readyState === xhr.DONE && xhr.status == 200) {
+    xhr.addEventListener('load', () => {
+        let auth = xhr.response;
 
-            const status = JSON.parse(xhr.responseText);
-            if (status.success === true) {
-                signIn.classList.remove('signin_active');
-                welcome.classList.add('welcome_active');
-                userId.innerText = status.user_id;
-
-                localStorage.setItem('userId', status.user_id);
-            }
-            else {
-                alert('Неверный логин/пароль');
-            }
-
+        if (auth.success) {
+            localStorage.setItem('userId', auth.user_id);
+            authorization(auth.user_id);
+        } else {
+            alert('Неверный логин/пароль');
+            form.reset();
         }
     });
-
-    [...form.querySelectorAll('input')].forEach(input => input.value = ''); // очистка полей
-
-    e.preventDefault();
+    event.preventDefault();
 });
 
-// деавторизация
-exit.addEventListener('click', () => {
+signOut.addEventListener('click', function () {
     localStorage.removeItem('userId');
-    window.location.reload();
+    authorization(null);
+    form.reset();
 });
